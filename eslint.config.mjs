@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // infra/ is a fully separate npm package with its own tsconfig/lint
+    // scope (CDK + Lambda source) — not part of this frontend project.
+    "infra/**",
   ]),
 ]);
 

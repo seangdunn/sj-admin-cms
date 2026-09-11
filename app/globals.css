@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Parameterized for forking (see the new-client-fork skill) — a client
+     fork just swaps this one value. Defaults to the main site's deep-teal
+     (public/css/tokens.css --color-deep-teal) for a light brand tie-in. */
+  --color-accent: #12353b;
 }
 
 @theme inline {
