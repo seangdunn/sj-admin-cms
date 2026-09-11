@@ -1,0 +1,125 @@
+import { randomUUID } from "crypto";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+
+const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const TABLE_NAME = process.env.TABLE_NAME as string;
+const IMAGES_CDN_DOMAIN = process.env.IMAGES_CDN_DOMAIN as string;
+
+const TITLE_MAX_LENGTH = 200;
+const DESCRIPTION_MAX_LENGTH = 2000;
+const MAX_IMAGES = 20;
+
+interface PortfolioItemInput {
+  title: string;
+  description: string;
+  images: string[];
+  featured: boolean;
+  order: number;
+}
+
+function jsonResponse(statusCode: number, body: unknown): APIGatewayProxyResultV2 {
+  return {
+    statusCode,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+}
+
+// Accumulates every field error in one pass (rather than failing fast) so
+// the client can show all problems at once — matches the contact-form
+// Lambda's validation convention. Never trust client-side validation alone.
+function validate(input: unknown): {
+  errors: Record<string, string>;
+  value: PortfolioItemInput | null;
+} {
+  const errors: Record<string, string> = {};
+
+  if (typeof input !== "object" || input === null) {
+    return { errors: { _body: "Request body must be a JSON object" }, value: null };
+  }
+  const body = input as Record<string, unknown>;
+
+  const title = typeof body.title === "string" ? body.title.trim() : "";
+  if (!title) {
+    errors.title = "Title is required";
+  } else if (title.length > TITLE_MAX_LENGTH) {
+    errors.title = `Title must be ${TITLE_MAX_LENGTH} characters or fewer`;
+  }
+
+  const description =
+    typeof body.description === "string" ? body.description.trim() : "";
+  if (description.length > DESCRIPTION_MAX_LENGTH) {
+    errors.description = `Description must be ${DESCRIPTION_MAX_LENGTH} characters or fewer`;
+  }
+
+  const images: string[] = [];
+  if (body.images !== undefined) {
+    if (!Array.isArray(body.images)) {
+      errors.images = "Images must be an array of URLs";
+    } else if (body.images.length > MAX_IMAGES) {
+      errors.images = `A maximum of ${MAX_IMAGES} images is allowed`;
+    } else {
+      for (const img of body.images) {
+        if (typeof img !== "string" || !img.startsWith(`https://${IMAGES_CDN_DOMAIN}/`)) {
+          errors.images =
+            "Each image must be a URL uploaded through this app's own upload flow";
+          break;
+        }
+        images.push(img);
+      }
+    }
+  }
+
+  const featured = body.featured === true;
+
+  let order = 0;
+  if (body.order !== undefined) {
+    if (typeof body.order !== "number" || !Number.isFinite(body.order)) {
+      errors.order = "Order must be a number";
+    } else {
+      order = body.order;
+    }
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { errors, value: null };
+  }
+
+  return { errors: {}, value: { title, description, images, featured, order } };
+}
+
+export async function handler(
+  event: APIGatewayProxyEventV2
+): Promise<APIGatewayProxyResultV2> {
+  let parsedBody: unknown;
+  try {
+    parsedBody = event.body ? JSON.parse(event.body) : {};
+  } catch {
+    return jsonResponse(400, { success: false, errors: { _body: "Invalid JSON" } });
+  }
+
+  const { errors, value } = validate(parsedBody);
+  if (!value) {
+    return jsonResponse(400, { success: false, errors });
+  }
+
+  const id = randomUUID();
+  const item = { id, ...value };
+
+  try {
+    await client.send(new PutCommand({ TableName: TABLE_NAME, Item: item }));
+    return jsonResponse(201, { success: true, item });
+  } catch (err) {
+    console.error("create-portfolio-item failed", {
+      id,
+      errorName: err instanceof Error ? err.name : "Unknown",
+      errorMessage: err instanceof Error ? err.message : String(err),
+    });
+    return jsonResponse(500, {
+      success: false,
+      error: "Failed to create portfolio item",
+    });
+  }
+}

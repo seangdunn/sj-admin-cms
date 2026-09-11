@@ -1,0 +1,28 @@
+{
+  "name": "sj-admin-cms-infra",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AWS CDK app: Cognito auth, portfolio CRUD API (API Gateway + Lambda + DynamoDB + S3/CloudFront image uploads), and admin-frontend hosting for sj-admin-cms.",
+  "scripts": {
+    "build": "tsc -p .",
+    "synth": "cdk synth",
+    "diff": "cdk diff",
+    "deploy": "cdk deploy"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^20.14.0",
+    "aws-cdk": "^2.150.0",
+    "aws-cdk-lib": "^2.150.0",
+    "constructs": "^10.3.0",
+    "esbuild": "^0.23.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.600.0",
+    "@aws-sdk/s3-presigned-post": "^3.600.0"
+  }
+}
