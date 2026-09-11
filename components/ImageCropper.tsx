@@ -142,8 +142,13 @@ export default function ImageCropper({ file, onComplete, onCancel }: ImageCroppe
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black/80 p-4">
-      <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-black/80 p-4">
+      {/* This wrapper is itself a flex-1 item of the outer column, so it
+          needs min-h-0 too — without it, it never shrinks below its own
+          content's natural size, which defeats the inner preview area's
+          min-h-0 before that constraint ever reaches it. Nested flex-shrink
+          needs min-h-0 at every level, not just the innermost one. */}
+      <div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col gap-4">
         <div className="flex gap-2">
           <button
             type="button"
@@ -165,7 +170,13 @@ export default function ImageCropper({ file, onComplete, onCancel }: ImageCroppe
           </button>
         </div>
 
-        <div className="relative min-h-64 flex-1 overflow-hidden rounded bg-black">
+        {/* min-h-0 is load-bearing: without it, a flex-1 child in a flex
+            column can't shrink below its content's intrinsic size, so a
+            tall portrait image grows this container to fit itself and
+            pushes the color picker / action buttons off-screen entirely.
+            overflow-y-auto on the outer wrapper is a scroll fallback for
+            any viewport still too short even after this. */}
+        <div className="relative flex-1 min-h-0 overflow-hidden rounded bg-black">
           {mode === "crop" ? (
             <Cropper
               image={objectUrl}
