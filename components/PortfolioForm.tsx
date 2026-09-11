@@ -4,7 +4,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { apiClient, ApiError } from "@/lib/api-client";
 import { uploadImage } from "@/lib/uploads";
-import type { PortfolioItem } from "@/lib/types";
+import { PACKAGE_OPTIONS, type PortfolioItem } from "@/lib/types";
 import ImageCropper from "./ImageCropper";
 
 interface PortfolioFormProps {
@@ -17,6 +17,8 @@ export default function PortfolioForm({ initialItem }: PortfolioFormProps) {
 
   const [title, setTitle] = useState(initialItem?.title ?? "");
   const [description, setDescription] = useState(initialItem?.description ?? "");
+  const [packageName, setPackageName] = useState(initialItem?.packageName ?? "");
+  const [industry, setIndustry] = useState(initialItem?.industry ?? "");
   const [featured, setFeatured] = useState(initialItem?.featured ?? false);
   const [order, setOrder] = useState(initialItem?.order ?? 0);
   const [images, setImages] = useState<string[]>(initialItem?.images ?? []);
@@ -56,7 +58,7 @@ export default function PortfolioForm({ initialItem }: PortfolioFormProps) {
     setFormError(null);
     setSubmitting(true);
 
-    const payload = { title, description, images, featured, order };
+    const payload = { title, description, images, featured, order, packageName, industry };
 
     try {
       if (isEdit && initialItem) {
@@ -105,6 +107,47 @@ export default function PortfolioForm({ initialItem }: PortfolioFormProps) {
         {fieldErrors.description && (
           <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>
         )}
+      </div>
+
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label htmlFor="packageName" className="mb-1 block text-sm font-medium text-gray-700">
+            Package
+          </label>
+          <select
+            id="packageName"
+            value={packageName}
+            onChange={(e) => setPackageName(e.target.value)}
+            className="w-full rounded border border-gray-300 px-3 py-2"
+          >
+            <option value="" disabled>
+              Select a package
+            </option>
+            {PACKAGE_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {fieldErrors.packageName && (
+            <p className="mt-1 text-sm text-red-600">{fieldErrors.packageName}</p>
+          )}
+        </div>
+        <div className="flex-1">
+          <label htmlFor="industry" className="mb-1 block text-sm font-medium text-gray-700">
+            Industry
+          </label>
+          <input
+            id="industry"
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            placeholder="e.g. Restaurant, Law Firm"
+            className="w-full rounded border border-gray-300 px-3 py-2"
+          />
+          {fieldErrors.industry && (
+            <p className="mt-1 text-sm text-red-600">{fieldErrors.industry}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-6">

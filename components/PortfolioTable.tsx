@@ -50,7 +50,13 @@ export default function PortfolioTable({ items, onDelete }: PortfolioTableProps)
                   <div className="h-12 w-16 rounded bg-gray-100" />
                 )}
               </td>
-              <td className="py-3 pr-4 font-medium text-gray-900">{item.title}</td>
+              <td className="py-3 pr-4">
+                <div className="font-medium text-gray-900">{item.title}</div>
+                <div className="text-xs text-gray-500">
+                  {item.packageName}
+                  {item.industry && ` · ${item.industry}`}
+                </div>
+              </td>
               <td className="py-3 pr-4">
                 {item.featured && (
                   <span className="rounded bg-(--color-accent)/10 px-2 py-0.5 text-xs text-(--color-accent)">
@@ -85,6 +91,10 @@ export default function PortfolioTable({ items, onDelete }: PortfolioTableProps)
             )}
             <div className="flex flex-1 flex-col">
               <span className="font-medium text-gray-900">{item.title}</span>
+              <span className="text-xs text-gray-500">
+                {item.packageName}
+                {item.industry && ` · ${item.industry}`}
+              </span>
               <span className="text-xs text-gray-500">
                 Order {item.order}
                 {item.featured && " · Featured"}

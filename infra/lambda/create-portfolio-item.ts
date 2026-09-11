@@ -9,7 +9,19 @@ const IMAGES_CDN_DOMAIN = process.env.IMAGES_CDN_DOMAIN as string;
 
 const TITLE_MAX_LENGTH = 200;
 const DESCRIPTION_MAX_LENGTH = 2000;
+const INDUSTRY_MAX_LENGTH = 100;
 const MAX_IMAGES = 20;
+
+// Must match lib/types.ts's PACKAGE_OPTIONS and update-portfolio-item.ts
+// exactly — update all three together if these ever change.
+const PACKAGE_OPTIONS = [
+  "Brand Identity",
+  "Static Site",
+  "Editable Site",
+  "Full Brand + Site",
+  "Site Migration",
+  "As-Is Rebuild",
+] as const;
 
 interface PortfolioItemInput {
   title: string;
@@ -17,6 +29,8 @@ interface PortfolioItemInput {
   images: string[];
   featured: boolean;
   order: number;
+  packageName: string;
+  industry: string;
 }
 
 function jsonResponse(statusCode: number, body: unknown): APIGatewayProxyResultV2 {
@@ -83,11 +97,26 @@ function validate(input: unknown): {
     }
   }
 
+  const packageName = typeof body.packageName === "string" ? body.packageName : "";
+  if (!PACKAGE_OPTIONS.includes(packageName as (typeof PACKAGE_OPTIONS)[number])) {
+    errors.packageName = `Package must be one of: ${PACKAGE_OPTIONS.join(", ")}`;
+  }
+
+  const industry = typeof body.industry === "string" ? body.industry.trim() : "";
+  if (!industry) {
+    errors.industry = "Industry is required";
+  } else if (industry.length > INDUSTRY_MAX_LENGTH) {
+    errors.industry = `Industry must be ${INDUSTRY_MAX_LENGTH} characters or fewer`;
+  }
+
   if (Object.keys(errors).length > 0) {
     return { errors, value: null };
   }
 
-  return { errors: {}, value: { title, description, images, featured, order } };
+  return {
+    errors: {},
+    value: { title, description, images, featured, order, packageName, industry },
+  };
 }
 
 export async function handler(
