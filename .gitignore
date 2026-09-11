@@ -1,0 +1,25 @@
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.log
+
+# environment / secrets
+.env
+.env.*
+!.env.example
+
+# next.js
+/node_modules
+/.next/
+/out/
+
+# infra (CDK / lambda)
+infra/node_modules/
+infra/dist/
+infra/cdk.out/
+infra/.aws-sam/
+
+# local tool config (skills ARE committed — this repo is a template, forks need them)
+.claude/settings.local.json

@@ -1,0 +1,34 @@
+#!/bin/sh
+# Blocks commits containing AWS access keys, secret keys, ARNs, or account IDs.
+# Installed via: git config core.hooksPath .githooks
+
+files=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$files" ] && exit 0
+
+found=0
+patterns='AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|aws_secret_access_key|arn:aws:[a-zA-Z0-9-]+:[a-zA-Z0-9-]*:[0-9]{0,12}:'
+
+for f in $files; do
+  [ -f "$f" ] || continue
+  [ "$f" = ".githooks/pre-commit" ] && continue
+  match=$(git show ":$f" | grep -InE "$patterns")
+  if [ -n "$match" ]; then
+    echo "pre-commit: possible AWS credential/ARN in $f:"
+    echo "$match"
+    found=1
+  fi
+  acct=$(git show ":$f" | grep -InE "[^0-9][0-9]{12}[^0-9]")
+  if [ -n "$acct" ]; then
+    echo "pre-commit: possible AWS account ID (12 digits) in $f:"
+    echo "$acct"
+    found=1
+  fi
+done
+
+if [ "$found" -eq 1 ]; then
+  echo ""
+  echo "Commit blocked: remove the flagged values or add an explicit allowlist exception before committing."
+  exit 1
+fi
+
+exit 0
