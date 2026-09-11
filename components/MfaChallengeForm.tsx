@@ -21,7 +21,11 @@ export default function MfaChallengeForm({ challenge, onSuccess }: MfaChallengeF
     try {
       const session = await respondToMfaChallenge(challenge, code.trim());
       onSuccess(session);
-    } catch {
+    } catch (err) {
+      console.error("MFA challenge failed", {
+        errorName: err instanceof Error ? err.name : "Unknown",
+        errorMessage: err instanceof Error ? err.message : String(err),
+      });
       setError("Invalid or expired code. Try again.");
     } finally {
       setSubmitting(false);
