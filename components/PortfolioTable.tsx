@@ -18,7 +18,8 @@ export default function PortfolioTable({ items, onDelete }: PortfolioTableProps)
         <p className="mb-3 text-sm text-gray-500">No portfolio items yet.</p>
         <Link
           href="/portfolio/new"
-          className="inline-block rounded bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white"
+          prefetch={false}
+          className="inline-block rounded bg-(--color-accent) px-4 py-2 text-sm font-medium text-white"
         >
           Add item
         </Link>
@@ -52,7 +53,7 @@ export default function PortfolioTable({ items, onDelete }: PortfolioTableProps)
               <td className="py-3 pr-4 font-medium text-gray-900">{item.title}</td>
               <td className="py-3 pr-4">
                 {item.featured && (
-                  <span className="rounded bg-[var(--color-accent)]/10 px-2 py-0.5 text-xs text-[var(--color-accent)]">
+                  <span className="rounded bg-(--color-accent)/10 px-2 py-0.5 text-xs text-(--color-accent)">
                     Featured
                   </span>
                 )}
@@ -60,7 +61,7 @@ export default function PortfolioTable({ items, onDelete }: PortfolioTableProps)
               <td className="py-3 pr-4 text-gray-500">{item.order}</td>
               <td className="py-3">
                 <div className="flex gap-3">
-                  <Link href={`/portfolio/edit?id=${item.id}`} className="text-[var(--color-accent)]">
+                  <Link href={`/portfolio/edit?id=${item.id}`} prefetch={false} className="text-(--color-accent)">
                     Edit
                   </Link>
                   <button type="button" onClick={() => onDelete(item.id)} className="text-red-600">
@@ -89,7 +90,7 @@ export default function PortfolioTable({ items, onDelete }: PortfolioTableProps)
                 {item.featured && " · Featured"}
               </span>
               <div className="mt-2 flex gap-4 text-sm">
-                <Link href={`/portfolio/edit?id=${item.id}`} className="text-[var(--color-accent)]">
+                <Link href={`/portfolio/edit?id=${item.id}`} prefetch={false} className="text-(--color-accent)">
                   Edit
                 </Link>
                 <button type="button" onClick={() => onDelete(item.id)} className="text-red-600">

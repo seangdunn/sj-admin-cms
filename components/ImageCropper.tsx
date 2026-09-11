@@ -149,7 +149,7 @@ export default function ImageCropper({ file, onComplete, onCancel }: ImageCroppe
             type="button"
             onClick={() => setMode("crop")}
             className={`rounded px-3 py-1.5 text-sm ${
-              mode === "crop" ? "bg-[var(--color-accent)] text-white" : "bg-white/10 text-white"
+              mode === "crop" ? "bg-(--color-accent) text-white" : "bg-white/10 text-white"
             }`}
           >
             Crop
@@ -158,7 +158,7 @@ export default function ImageCropper({ file, onComplete, onCancel }: ImageCroppe
             type="button"
             onClick={() => setMode("fit")}
             className={`rounded px-3 py-1.5 text-sm ${
-              mode === "fit" ? "bg-[var(--color-accent)] text-white" : "bg-white/10 text-white"
+              mode === "fit" ? "bg-(--color-accent) text-white" : "bg-white/10 text-white"
             }`}
           >
             Fit with fill
@@ -207,7 +207,7 @@ export default function ImageCropper({ file, onComplete, onCancel }: ImageCroppe
             type="button"
             onClick={handleConfirm}
             disabled={busy || !sourceImage || (mode === "crop" && !croppedAreaPixels)}
-            className="rounded bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded bg-(--color-accent) px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {busy ? "Processing…" : "Use this image"}
           </button>

@@ -10,7 +10,7 @@ export default function NewPortfolioItemPage() {
     <AuthGuard>
       <main className="min-h-screen bg-gray-50">
         <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
-          <Link href="/portfolio" className="text-sm font-semibold text-gray-900">
+          <Link href="/portfolio" prefetch={false} className="text-sm font-semibold text-gray-900">
             S&amp;J Admin
           </Link>
           <LogoutButton />

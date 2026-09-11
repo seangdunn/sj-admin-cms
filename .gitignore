@@ -25,3 +25,4 @@ infra/.aws-sam/
 
 # local tool config (skills ARE committed — this repo is a template, forks need them)
 .claude/settings.local.json
+.claude/scheduled_tasks.lock

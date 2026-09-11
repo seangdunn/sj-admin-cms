@@ -44,7 +44,7 @@ function PortfolioList() {
       <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
         <span className="text-sm font-semibold text-gray-900">S&amp;J Admin</span>
         <div className="flex items-center gap-4">
-          <Link href="/settings" className="text-sm text-gray-600 hover:text-gray-900">
+          <Link href="/settings" prefetch={false} className="text-sm text-gray-600 hover:text-gray-900">
             Settings
           </Link>
           <LogoutButton />
@@ -56,7 +56,8 @@ function PortfolioList() {
           <h1 className="text-lg font-semibold text-gray-900">Portfolio Items</h1>
           <Link
             href="/portfolio/new"
-            className="rounded bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white"
+            prefetch={false}
+            className="rounded bg-(--color-accent) px-4 py-2 text-sm font-medium text-white"
           >
             Add item
           </Link>

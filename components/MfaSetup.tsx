@@ -59,7 +59,7 @@ export default function MfaSetup() {
           type="button"
           onClick={startEnrollment}
           disabled={status === "busy"}
-          className="rounded bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded bg-(--color-accent) px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {status === "busy" ? "Starting…" : "Enable MFA"}
         </button>
@@ -96,7 +96,7 @@ export default function MfaSetup() {
         type="button"
         onClick={verifyAndEnable}
         disabled={status === "busy" || code.length < 6}
-        className="rounded bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded bg-(--color-accent) px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {status === "busy" ? "Verifying…" : "Verify and enable"}
       </button>
